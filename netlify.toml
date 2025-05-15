@@ -12,4 +12,4 @@
   status = 200
 
 [context.production.environment]
-  VITE_API_URL = "https://timetable-backend.onrender.com" 
+  VITE_API_URL = "https://backend-nz7c.onrender.com" 
