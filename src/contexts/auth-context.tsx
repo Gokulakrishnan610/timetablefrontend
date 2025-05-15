@@ -59,15 +59,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         const response = await authService.getCurrentUser();
         if (response && response.data) {
           // Extract user data based on response structure
-          let userData = null;
+          let userData: any = null;
           
           if (response.data.data && response.data.data.user) {
             // Structure: { data: { user: {...}, student: {...} } }
             userData = response.data.data.user;
             
             // Add student ID if available
-            if (response.data.data.student) {
-              userData.student_id = userData.email;
+            if (userData && response.data.data.student) {
+              userData.student_id = userData?.email || '';
               // Add any other needed student properties
               userData.department = response.data.data.student.department?.dept_name || '';
             }
@@ -76,8 +76,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             userData = response.data.user;
             
             // Add student ID if available
-            if (response.data.student) {
-              userData.student_id = userData.email;
+            if (userData && response.data.student) {
+              userData.student_id = userData?.email || '';
               // Add any other needed student properties
               userData.department = response.data.student.department?.dept_name || '';
             }
@@ -86,18 +86,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
             userData = response.data;
             
             // Ensure required fields exist
-            userData.first_name = userData.first_name || '';
-            userData.last_name = userData.last_name || '';
-            userData.email = userData.email || userData.id || '';
+            if (userData) {
+              userData.first_name = userData?.first_name || '';
+              userData.last_name = userData?.last_name || '';
+              userData.email = userData?.email || userData?.id || '';
+            }
           }
           
           // Make sure we have minimal required user data
-          if (!userData.first_name && !userData.last_name && !userData.email && !userData.id) {
+          if (userData && (!userData.first_name && !userData.last_name && !userData.email && !userData.id)) {
             throw new Error('Invalid user data received');
           }
           
           // Store user data in localStorage for offline/fallback access
-          localStorage.setItem('user', JSON.stringify(userData));
+          if (userData) {
+            localStorage.setItem('user', JSON.stringify(userData));
+          }
           
           return userData;
         }
@@ -138,15 +142,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log('Login response:', response.data);
       
       // Extract user data from response
-      let userData = null;
+      let userData: any = null;
       
       if (response.data.data && response.data.data.user) {
         // Structure: { data: { user: {...}, student: {...} } }
         userData = response.data.data.user;
         
         // Add student ID if available
-        if (response.data.data.student) {
-          userData.student_id = userData.email;
+        if (userData && response.data.data.student) {
+          userData.student_id = userData?.email || '';
           // Add any other needed student properties
           userData.department = response.data.data.student.department?.dept_name || '';
         }
@@ -155,8 +159,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         userData = response.data.user;
         
         // Add student ID if available
-        if (response.data.student) {
-          userData.student_id = userData.email;
+        if (userData && response.data.student) {
+          userData.student_id = userData?.email || '';
           // Add any other needed student properties
           userData.department = response.data.student.department?.dept_name || '';
         }
@@ -165,9 +169,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         userData = response.data;
         
         // Ensure required fields exist
-        userData.first_name = userData.first_name || '';
-        userData.last_name = userData.last_name || '';
-        userData.email = userData.email || userData.id || '';
+        if (userData) {
+          userData.first_name = userData?.first_name || '';
+          userData.last_name = userData?.last_name || '';
+          userData.email = userData?.email || userData?.id || '';
+        }
       }
       
       if (userData) {

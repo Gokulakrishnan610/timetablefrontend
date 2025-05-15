@@ -492,7 +492,7 @@ export const studentCourseApi = {
       `/api/slot/`
     ];
     
-    let lastError = null;
+    let lastError: any = null;
     for (const endpoint of endpoints) {
       try {
         console.log(`Trying slots endpoint: ${endpoint}`);
